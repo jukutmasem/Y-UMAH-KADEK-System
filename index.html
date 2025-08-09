@@ -6,617 +6,600 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>Aplikasi Kasir</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        /* CSS untuk Tampilan Aplikasi */
-        :root {
-            --primary-color: #3498db;
-            --primary-hover: #2980b9;
-            --sidebar-bg: #2c3e50;
-            --sidebar-text: #ecf0f1;
-            --content-bg: #f4f7f9;
-            --card-bg: #ffffff;
-            --text-color: #34495e;
-            --muted-color: #95a5a6;
-            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.05);
-            --shadow-medium: 0 6px 20px rgba(0, 0, 0, 0.1);
+   <style>
+    /* CSS untuk Tampilan Aplikasi */
+    :root {
+        --primary-color: #3498db;
+        --primary-hover: #2980b9;
+        --sidebar-bg: #2c3e50;
+        --sidebar-text: #ecf0f1;
+        --content-bg: #f4f7f9;
+        --card-bg: #ffffff;
+        --text-color: #34495e;
+        --muted-color: #95a5a6;
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.05);
+        --shadow-medium: 0 6px 20px rgba(0, 0, 0, 0.1);
+    }
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: var(--content-bg);
+        color: var(--text-color);
+    }
+    .container {
+        display: flex;
+        min-height: 100vh;
+    }
+    .card {
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: var(--shadow-light);
+        padding: 25px;
+    }
+    /* -- Modal (Edit Form & Struk) -- */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 101;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background-color: var(--card-bg);
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+        box-shadow: var(--shadow-medium);
+        position: relative;
+    }
+    .modal-close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        position: absolute;
+        top: 15px;
+        right: 25px;
+    }
+    .modal-close:hover,
+    .modal-close:focus {
+        color: #e74c3c;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    /* -- Halaman Login -- */
+    .login-page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--content-bg);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        z-index: 100;
+    }
+    .login-card {
+        width: 90%;
+        max-width: 400px;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        padding: 40px 30px;
+        box-shadow: var(--shadow-medium);
+        text-align: left;
+    }
+    .login-card h2 {
+        text-align: center;
+        margin-top: 0;
+        font-size: 2em;
+        color: var(--primary-color);
+    }
+    .login-card .form-group {
+        margin-bottom: 20px;
+    }
+    .login-card .form-group input {
+        width: 100%;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        box-sizing: border-box;
+    }
+    .login-card .form-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+    .login-btn {
+        width: 100%;
+        padding: 15px;
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1em;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .login-btn:hover {
+        background-color: var(--primary-hover);
+    }
+    .login-message {
+        text-align: center;
+        margin-top: 15px;
+        color: #e74c3c;
+        display: none;
+    }
+
+    /* -- Welcome Page -- */
+    .welcome-page {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: var(--primary-color);
+        color: white;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        z-index: 100;
+    }
+    .welcome-page h1 {
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+    .welcome-page p {
+        font-size: 1.2em;
+        margin-bottom: 30px;
+    }
+    .welcome-page .start-btn {
+        padding: 15px 40px;
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.2em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .welcome-page .start-btn:hover {
+        background-color: #27ae60;
+    }
+    .welcome-page i {
+        font-size: 5em;
+        margin-bottom: 20px;
+    }
+
+    /* -- Sidebar Navigation -- */
+    .sidebar-nav {
+        width: 250px;
+        background-color: var(--sidebar-bg);
+        color: var(--sidebar-text);
+        padding: 30px 20px;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+    }
+    .app-logo {
+        font-size: 1.5em;
+        font-weight: 700;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .app-logo i {
+        color: var(--primary-color);
+        margin-right: 10px;
+    }
+    .sidebar-nav nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .sidebar-nav nav li a {
+        display: flex;
+        align-items: center;
+        color: var(--sidebar-text);
+        text-decoration: none;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    .sidebar-nav nav li a:hover {
+        background-color: #34495e;
+    }
+    .sidebar-nav nav li a.active {
+        background-color: var(--primary-color);
+        color: #fff;
+        box-shadow: var(--shadow-light);
+    }
+    .sidebar-nav nav li a i {
+        font-size: 1.2em;
+        width: 30px;
+    }
+
+    /* -- Content Area -- */
+    .content {
+        flex-grow: 1;
+        padding: 30px;
+        overflow-y: auto;
+    }
+    .content-header {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .page-title {
+        margin: 0;
+        font-size: 2.2em;
+        font-weight: 700;
+    }
+    .page-description {
+        margin: 5px 0 0;
+        color: var(--muted-color);
+    }
+    .main-layout {
+        display: flex;
+        gap: 25px;
+        height: calc(100vh - 180px);
+    }
+    .product-selection-area {
+        flex: 2;
+        overflow-y: auto;
+    }
+    .cart-summary-area {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .page {
+        display: none;
+    }
+    .page.active {
+        display: block;
+    }
+
+    /* -- Products Grid -- */
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 15px;
+    }
+    .product-item {
+        background-color: #ecf0f1;
+        border-radius: 12px;
+        padding: 15px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: 1px solid #e9ecef;
+    }
+    .product-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        background-color: #e2e6ea;
+    }
+    .product-item h4 {
+        margin: 5px 0;
+        font-size: 1.1em;
+        font-weight: 600;
+    }
+    .product-item span {
+        font-size: 0.9em;
+        color: var(--muted-color);
+    }
+
+    /* -- Cart Sidebar -- */
+    .cart-title {
+        margin: 0 0 15px 0;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 1.3em;
+        font-weight: 600;
+    }
+    .cart-title i {
+        color: var(--primary-color);
+        margin-right: 10px;
+    }
+    .cart {
+        flex-grow: 1;
+        overflow-y: auto;
+        padding-right: 10px;
+    }
+    .cart-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    .cart-item button {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 5px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 0.9em;
+        transition: background-color 0.2s;
+    }
+    .cart-item button:hover {
+        background-color: #c0392b;
+    }
+    .cart-footer {
+        margin-top: 25px;
+        padding-top: 20px;
+        border-top: 2px solid #e0e0e0;
+        position: sticky;
+        bottom: 0;
+        background-color: var(--card-bg);
+        z-index: 2;
+    }
+    .total-summary {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    .total-summary span {
+        font-size: 1.2em;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+    .total-summary h3 {
+        margin: 0;
+        font-size: 1.8em;
+        color: var(--text-color);
+    }
+    .checkout-btn {
+        width: 100%;
+        padding: 18px;
+        background-color: #2ecc71;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.3em;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.2s;
+    }
+    .checkout-btn:hover {
+        background-color: #27ae60;
+    }
+    .checkout-btn i {
+        margin-right: 10px;
+    }
+
+    /* -- Form & Table Styles -- */
+    form {
+        background-color: var(--card-bg);
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 25px;
+    }
+    .form-group {
+        margin-bottom: 20px;
+    }
+    .form-group label {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 8px;
+        display: block;
+    }
+    .form-group input {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 12px;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 1em;
+        transition: border-color 0.2s;
+    }
+    .form-group input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    }
+    .btn {
+        padding: 12px 25px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+    }
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+    }
+    .btn-danger {
+        background-color: #e74c3c;
+        color: white;
+    }
+    .btn-danger:hover {
+        background-color: #c0392b;
+    }
+    .btn-warning {
+        background-color: #f39c12;
+        color: white;
+    }
+    .btn-warning:hover {
+        background-color: #e67e22;
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 25px;
+        background-color: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: var(--shadow-light);
+        overflow: hidden;
+    }
+    .data-table th, .data-table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #f0f2f5;
+    }
+    .data-table th {
+        background-color: #ecf0f1;
+        color: var(--text-color);
+        font-weight: 600;
+    }
+    .data-table tr:last-child td {
+        border-bottom: none;
+    }
+    .data-table tr:nth-child(even) {
+        background-color: #fafbfd;
+    }
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+    .search-container {
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+    }
+    .search-container input {
+        flex-grow: 1;
+    }
+
+    /* --- STYLING UNTUK STRUK --- */
+    .struk-content {
+        font-family: 'Courier New', Courier, monospace;
+        padding: 20px;
+        text-align: center;
+    }
+    .struk-header {
+        margin-bottom: 20px;
+        text-align: center; /* Menambahkan properti ini */
+    }
+    .struk-logo {
+        max-width: 150px; /* Atur ukuran logo sesuai kebutuhan */
+        height: auto;
+        margin-bottom: 10px;
+    }
+    .struk-content h2 {
+        margin: 0;
+    }
+    .struk-content p {
+        margin: 5px 0;
+        font-size: 0.9em;
+    }
+    .struk-items {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 0.9em;
+    }
+    .struk-items th, .struk-items td {
+        padding: 8px 0;
+        text-align: left;
+        border-bottom: 1px dashed #ccc;
+    }
+    .struk-items .item-price, .struk-items .item-qty {
+        text-align: right;
+    }
+    .struk-total {
+        text-align: right;
+        font-size: 1.1em;
+        font-weight: bold;
+        border-top: 1px solid black;
+        padding-top: 10px;
+        margin-top: 10px;
+    }
+    .struk-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: center;
+    }
+    .struk-buttons .btn {
+        width: 100%;
+        padding: 10px;
+    }
+    /* print-specific styles */
+    @media print {
+        body > *:not(.print-container) {
+            display: none !important;
         }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--content-bg);
-            color: var(--text-color);
-        }
-        .container {
-            display: flex;
-            min-height: 100vh;
-        }
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow-light);
-            padding: 25px;
-        }
-        /* -- Modal (Edit Form & Struk) -- */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 101;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background-color: var(--card-bg);
-            padding: 30px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-            box-shadow: var(--shadow-medium);
-            position: relative;
-        }
-        .modal-close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
+        .print-container {
+            display: block;
             position: absolute;
-            top: 15px;
-            right: 25px;
-        }
-        .modal-close:hover,
-        .modal-close:focus {
-            color: #e74c3c;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        /* -- Halaman Login -- */
-        .login-page {
-            position: fixed;
-            top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: var(--content-bg);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            z-index: 100;
-        }
-        .login-card {
-            width: 90%;
-            max-width: 400px;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 40px 30px;
-            box-shadow: var(--shadow-medium);
-            text-align: left;
-        }
-        .login-card h2 {
-            text-align: center;
-            margin-top: 0;
-            font-size: 2em;
-            color: var(--primary-color);
-        }
-        .login-card .form-group {
-            margin-bottom: 20px;
-        }
-        .login-card .form-group input {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            box-sizing: border-box;
-        }
-        .login-card .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-        .login-btn {
-            width: 100%;
-            padding: 15px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .login-btn:hover {
-            background-color: var(--primary-hover);
-        }
-        .login-message {
-            text-align: center;
-            margin-top: 15px;
-            color: #e74c3c;
-            display: none;
-        }
-
-        /* -- Welcome Page -- */
-        .welcome-page {
-            position: fixed;
             top: 0;
-            left: 0;
             width: 100%;
-            height: 100%;
-            background-color: var(--primary-color);
-            color: white;
-            display: none;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            z-index: 100;
-        }
-        .welcome-page h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-        }
-        .welcome-page p {
-            font-size: 1.2em;
-            margin-bottom: 30px;
-        }
-        .welcome-page .start-btn {
-            padding: 15px 40px;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.2em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .welcome-page .start-btn:hover {
-            background-color: #27ae60;
-        }
-        .welcome-page i {
-            font-size: 5em;
-            margin-bottom: 20px;
-        }
-
-        /* -- Sidebar Navigation -- */
-        body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: var(--content-bg);
-    color: var(--text-color);
-    overflow: hidden; /* Tambahkan baris ini */
-}
-.container {
-    display: flex;
-    height: 100vh; /* Ubah 'min-height' menjadi 'height' */
-}
-        .sidebar-nav {
-    width: 250px;
-    background-color: var(--sidebar-bg);
-    color: var(--sidebar-text);
-    padding: 30px 20px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    flex-shrink: 0; /* Tambahkan baris ini */
-}
-        .app-logo {
-            font-size: 1.5em;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .app-logo i {
-            color: var(--primary-color);
-            margin-right: 10px;
-        }
-        .sidebar-nav nav ul {
-            list-style: none;
+            box-shadow: none;
             padding: 0;
-            margin: 0;
         }
-        .sidebar-nav nav li a {
-            display: flex;
-            align-items: center;
-            color: var(--sidebar-text);
-            text-decoration: none;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .sidebar-nav nav li a:hover {
-            background-color: #06196e;
-        }
-        .sidebar-nav nav li a.active {
-            background-color: var(--primary-color);
-            color: #504f4f;
-            box-shadow: var(--shadow-light);
-        }
-        .sidebar-nav nav li a i {
-            font-size: 1.2em;
-            width: 30px;
-        }
-        
-
-        /* -- Content Area -- */
-        .content {
-    flex-grow: 1;
-    padding: 30px;
-    overflow-y: auto; /* Properti ini sudah benar dan harus dipertahankan */
-}
-        .content-header {
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        .page-title {
-            margin: 0;
-            font-size: 2.2em;
-            font-weight: 700;
-        }
-        .page-description {
-            margin: 5px 0 0;
-            color: var(--muted-color);
-        }
-        .main-layout {
-            display: flex;
-            gap: 25px;
-            height: calc(100vh - 180px);
-        }
-        .product-selection-area {
-            flex: 2;
-            overflow-y: auto;
-        }
-        .cart-summary-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .page {
-            display: none;
-        }
-        .page.active {
-            display: block;
-        }
-
-        /* -- Products Grid -- */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 15px;
-        }
-        .product-item {
-            background-color: #ecf0f1;
-            border-radius: 12px;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 1px solid #e9ecef;
-        }
-        .product-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-            background-color: #e2e6ea;
-        }
-        .product-item h4 {
-            margin: 5px 0;
-            font-size: 1.1em;
-            font-weight: 600;
-        }
-        .product-item span {
-            font-size: 0.9em;
-            color: var(--muted-color);
-        }
-
-        /* -- Cart Sidebar -- */
-        .cart-title {
-            margin: 0 0 15px 0;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e0e0e0;
-            font-size: 1.3em;
-            font-weight: 600;
-        }
-        .cart-title i {
-            color: var(--primary-color);
-            margin-right: 10px;
-        }
-        .cart {
-            flex-grow: 1;
-            overflow-y: auto;
-            padding-right: 10px;
-        }
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid #f0f2f5;
-        }
-        .cart-item button {
-            background-color: #e74c3c;
-            color: white;
-            border: none;
-            padding: 5px 12px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background-color 0.2s;
-        }
-        .cart-item button:hover {
-            background-color: #c0392b;
-        }
-        .cart-footer {
-            margin-top: 25px;
-            padding-top: 20px;
-            border-top: 2px solid #e0e0e0;
-        }
-        .total-summary {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        .total-summary span {
-            font-size: 1.2em;
-            color: var(--text-color);
-            font-weight: 500;
-        }
-        .total-summary h3 {
-            margin: 0;
-            font-size: 1.8em;
-            color: var(--text-color);
-        }
-        .checkout-btn {
-            width: 100%;
-            padding: 18px;
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.3em;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.2s;
-        }
-        .checkout-btn:hover {
-            background-color: #27ae60;
-        }
-        .checkout-btn i {
-            margin-right: 10px;
-        }
-
-        /* -- Form & Table Styles -- */
-        form {
-            background-color: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: var(--shadow-light);
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            font-weight: 600;
-            color: var(--text-color);
-            margin-bottom: 8px;
-            display: block;
-        }
-        .form-group input {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 12px;
-            width: 100%;
-            box-sizing: border-box;
-            font-size: 1em;
-            transition: border-color 0.2s;
-        }
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
-        }
-        .btn {
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            border: none;
-            cursor: pointer;
-        }
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        .btn-primary:hover {
-            background-color: var(--primary-hover);
-        }
-        .btn-danger {
-            background-color: #e74c3c;
-            color: white;
-        }
-        .btn-danger:hover {
-            background-color: #c0392b;
-        }
-        .btn-warning {
-            background-color: #f39c12;
-            color: white;
-        }
-        .btn-warning:hover {
-            background-color: #e67e22;
-        }
-        .data-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 25px;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow-light);
-            overflow: hidden;
-        }
-        .data-table th, .data-table td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #f0f2f5;
-        }
-        .data-table th {
-            background-color: #ecf0f1;
-            color: var(--text-color);
-            font-weight: 600;
-        }
-        .data-table tr:last-child td {
-            border-bottom: none;
-        }
-        .data-table tr:nth-child(even) {
-            background-color: #fafbfd;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 10px;
-        }
-        .search-container {
-            margin-bottom: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        .search-container input {
-            flex-grow: 1;
-        }
-
-        /* --- STYLING UNTUK STRUK --- */
-        .struk-content {
-            font-family: 'Courier New', Courier, monospace;
-            padding: 20px;
-            text-align: center;
-        }
-        .struk-header {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .struk-logo {
-            max-width: 150px;
-            height: auto;
-            margin-bottom: 10px;
-        }
-        .struk-content h2 {
-            margin: 0;
-        }
-        .struk-content p {
-            margin: 5px 0;
-            font-size: 0.9em;
-        }
-        .struk-items {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 0.9em;
-        }
-        .struk-items th, .struk-items td {
-            padding: 8px 0;
-            text-align: left;
-            border-bottom: 1px dashed #ccc;
-        }
-        .struk-items .item-price, .struk-items .item-qty {
-            text-align: right;
-        }
-        .struk-total {
-            text-align: right;
-            font-size: 1.1em;
-            font-weight: bold;
-            border-top: 1px solid black;
-            padding-top: 10px;
-            margin-top: 10px;
-        }
-        .struk-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            justify-content: center;
-        }
-        .struk-buttons .btn {
-            flex: 1;
-            padding: 10px;
-            margin: 0 5px;
-        }
-        .struk-buttons {
-            justify-content: space-between;
-        }
-        /* print-specific styles */
-        @media print {
-            body > *:not(.print-container) {
-                display: none !important;
-            }
-            .print-container {
-                display: block;
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                box-shadow: none;
-                padding: 0;
-            }
-            .modal-close, .struk-buttons, .non-printable {
-                display: none !important;
-            }
-            h3, h4, p, table {
-                color: black !important;
-            }
-            .btn { display: none; }
-        }
-        /* New styles for payment method modal */
-        .payment-summary-total {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #27ae60;
-            margin-bottom: 20px;
-        }
-        .payment-summary-total h3 {
-            margin: 0;
-        }
-        /* New styles for Laba Bersih details */
-        .laba-bersih-details {
-            margin-top: 15px;
-            font-size: 0.9em;
-            line-height: 1.5;
-            color: var(--muted-color);
-        }
-        .report-summary {
-            text-align: right;
-            padding: 15px;
-            border-top: 2px solid #ccc;
-            font-size: 1.2em;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        .print-header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 15px;
-        }
-        .print-header img {
-            max-width: 150px;
-            height: auto;
-            margin-bottom: 10px;
-        }
-        .printable-content {
-            background-color: white; /* Ensure white background for PDF */
-        }
-    </style>
+        .modal-close, .struk-buttons, .non-printable {
+            display: none !important;
+        }
+        h3, h4, p, table {
+            color: black !important;
+        }
+        .btn { display: none; }
+    }
+    /* New styles for payment method modal */
+    .payment-summary-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 1.5em;
+        font-weight: bold;
+        color: #27ae60;
+        margin-bottom: 20px;
+    }
+    .payment-summary-total h3 {
+        margin: 0;
+    }
+    /* New styles for Laba Bersih details */
+    .laba-bersih-details {
+        margin-top: 15px;
+        font-size: 0.9em;
+        line-height: 1.5;
+        color: var(--muted-color);
+    }
+    .report-summary {
+        text-align: right;
+        padding: 15px;
+        border-top: 2px solid #ccc;
+        font-size: 1.2em;
+        font-weight: bold;
+        margin-top: 10px;
+    }
+    .print-header {
+        text-align: center;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #000;
+        padding-bottom: 15px;
+    }
+    .print-header img {
+        max-width: 150px;
+        height: auto;
+        margin-bottom: 10px;
+    }
+</style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -1834,4 +1817,5 @@ di media sosial
     }
 </script>
 </body>
+
 </html>
