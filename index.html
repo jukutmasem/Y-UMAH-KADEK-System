@@ -539,27 +539,36 @@
         padding: 10px;
     }
     /* print-specific styles */
-    @media print {
-        body > *:not(.print-container) {
-            display: none !important;
-        }
-        .print-container {
-            display: block;
-            position: absolute;
-            left: 0;
-            top: 0;
-            width: 100%;
-            box-shadow: none;
-            padding: 0;
-        }
-        .modal-close, .struk-buttons, .non-printable {
-            display: none !important;
-        }
-        h3, h4, p, table {
-            color: black !important;
-        }
-        .btn { display: none; }
+   @media print {
+    /* Sembunyikan semua elemen kecuali modal */
+    body > *:not(#struk-modal) {
+        display: none !important;
     }
+    /* Tampilkan modal struk secara penuh untuk dicetak */
+    #struk-modal {
+        display: block !important;
+        position: static; /* Ganti fixed menjadi static untuk cetak */
+        width: 100%;
+        height: auto;
+        background-color: white;
+        padding: 0;
+        margin: 0;
+    }
+    .modal-content {
+        box-shadow: none;
+        padding: 0;
+        width: auto;
+        max-width: none;
+    }
+    /* Sembunyikan elemen yang tidak perlu dicetak di dalam modal */
+    .modal-close, .struk-buttons {
+        display: none !important;
+    }
+    /* Pastikan warna teks terlihat hitam */
+    h3, h4, p, table {
+        color: black !important;
+    }
+}
     /* New styles for payment method modal */
     .payment-summary-total {
         display: flex;
@@ -692,6 +701,7 @@ Jangan lupa follow dan tag kami di media sosial</p>
         </div>
         <div class="struk-buttons">
             <button class="btn btn-primary" onclick="shareStruk()">Bagikan Struk</button>
+            <button class="btn btn-warning" onclick="cetakStruk()">Cetak Struk</button>
             <button class="btn btn-danger" onclick="closeStrukModal()">Tutup</button>
         </div>
     </div>
@@ -854,20 +864,19 @@ Jangan lupa follow dan tag kami di media sosial</p>
                             <h4>Pendapatan</h4>
                         </div>
                         <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Tanggal</th>
-                                    <th>No. Transaksi</th>
-                                    <th>No. Meja</th>
-                                    <th>Jumlah</th>
-                                    <th>Tunai</th>
-                                    <th>Transfer</th>
-                                    <th id="th-aksi-pendapatan" style="display: none;" class="non-printable">Aksi</th>
-                                    <th class="non-printable">Struk</th>
-                                </tr>
-                            </thead>
-                            <tbody id="pendapatan-list"></tbody>
-                        </table>
+    <thead>
+        <tr>
+            <th>Tanggal</th>
+            <th>No. Transaksi</th>
+            <th>No. Meja</th>
+            <th>Jumlah</th>
+            <th>Tunai</th>
+            <th>Transfer</th>
+            <th id="th-aksi-pendapatan" style="display: none;" class="non-printable">Aksi</th>
+            <th class="non-printable">Struk</th> </tr>
+    </thead>
+    <tbody id="pendapatan-list"></tbody>
+</table>
                         <div class="report-summary">
                             Total Pendapatan: <span id="total-pendapatan-cetak">Rp 0</span>
                         </div>
@@ -1457,6 +1466,7 @@ di media sosial
 @y'umah kadek
 `;
 
+
         // First try Web Share API
         if (navigator.share) {
             navigator.share({
@@ -1480,6 +1490,22 @@ di media sosial
             fallbackShare(textStruk);
         }
     }
+    function cetakStruk() {
+    // Tampilkan modal struk
+    document.getElementById("struk-modal").style.display = "flex";
+
+    // Tunggu sebentar agar browser siap
+    setTimeout(() => {
+        // Jalankan perintah cetak
+        window.print();
+    }, 500);
+
+    // Tutup modal setelah cetak selesai
+    window.onafterprint = function() {
+        closeStrukModal();
+        window.onafterprint = null;
+    };
+}
 
     function fallbackShare(text) {
         // Create temporary element for copying
@@ -1762,6 +1788,52 @@ di media sosial
             document.body.removeChild(tempContainer);
         });
     }
+    // Fungsi untuk membagikan struk dari laporan
+async function shareStrukLaporan(transactionId) {
+    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    const transaction = transactions.find(t => t.id === transactionId);
+
+    if (!transaction) {
+        alert('Struk tidak ditemukan.');
+        return;
+    }
+
+    const strukContentDiv = document.getElementById('struk-content');
+    if (!strukContentDiv) {
+        alert('Elemen struk tidak ditemukan.');
+        return;
+    }
+
+    const strukHTML = generateStrukContent(transaction);
+    strukContentDiv.innerHTML = strukHTML;
+
+    // Memastikan elemen modal struk ditampilkan
+    document.getElementById('struk-modal').style.display = 'flex';
+
+    try {
+        const canvas = await html2canvas(strukContentDiv);
+        const dataUrl = canvas.toDataURL('image/png');
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], `struk_transaksi_${transaction.id}.png`, { type: 'image/png' });
+
+        if (navigator.share) {
+            await navigator.share({
+                files: [file],
+                title: `Struk Transaksi No. ${transaction.id}`,
+                text: 'Berikut adalah struk transaksi Anda.'
+            });
+            console.log('Struk berhasil dibagikan');
+        } else {
+            alert('Fungsi berbagi tidak didukung di browser ini.');
+        }
+    } catch (err) {
+        console.error('Error saat membagikan struk:', err);
+        alert('Gagal membagikan struk. Coba lagi.');
+    } finally {
+        // Sembunyikan kembali modal setelah selesai
+        closeStrukModal();
+    }
+}
 
     function generateStrukHTML(transaction) {
         const date = new Date(transaction.date);
