@@ -638,7 +638,7 @@
     
 </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -696,7 +696,7 @@
         <span class="modal-close" onclick="closeStrukModal()">&times;</span>
         <div id="struk-content" class="struk-content">
             <div class="struk-header">
-                <img id="struk-logo" src="Tanpa Judul.jpg" class="struk-logo" alt="Logo U'umah Kadek">
+               
                 <h2>Y'UMAH KADEK</h2>
                 <p>Pandawa Beach Kutuh, Kuta Selatan, Badung-Bali</p>
             </div>
@@ -727,11 +727,12 @@ We hope you like it.
 Jangan lupa follow dan tag kami di media sosial</p>
 <p>@y'umah kadek</p>
         </div>
-        <div class="struk-buttons">
-            <button class="btn btn-primary" onclick="shareStruk()">Bagikan Struk</button>
-            <button class="btn btn-warning" onclick="cetakStruk()">Cetak Struk</button>
-            <button class="btn btn-danger" onclick="closeStrukModal()">Tutup</button>
-        </div>
+        <div class="struk-buttons non-printable">
+    <button class="btn btn-primary" onclick="shareStruk()">Bagikan Struk</button>
+    <button class="btn btn-warning" onclick="cetakStrukPdf()">Cetak Struk</button>
+    <button class="btn btn-danger" onclick="closeStrukModal()">Tutup</button>
+</div>
+        
     </div>
 </div>
 
@@ -1850,9 +1851,7 @@ di media sosial
             document.body.removeChild(tempContainer);
         });
     }
-    function cetakStruk() {
-    window.print();
-}
+   
     // Fungsi untuk membagikan struk dari laporan
 async function shareStrukLaporan(transactionId) {
     const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
@@ -1899,6 +1898,36 @@ async function shareStrukLaporan(transactionId) {
         closeStrukModal();
     }
 }
+async function cetakStrukPdf() {
+    const strukModalContent = document.querySelector('#struk-modal .modal-content');
+    const nonPrintableElements = strukModalContent.querySelectorAll('.non-printable');
+
+    // Sembunyikan elemen non-printable
+    nonPrintableElements.forEach(el => el.style.display = 'none');
+
+    const options = {
+        scale: 2, 
+        useCORS: true 
+    };
+
+    html2canvas(strukModalContent, options).then(canvas => {
+        // Tampilkan kembali elemen non-printable setelah proses selesai
+        nonPrintableElements.forEach(el => el.style.display = '');
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: [80, canvas.height * 80 / canvas.width] 
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        pdf.addImage(imgData, 'PNG', 0, 0, 80, canvas.height * 80 / canvas.width);
+        
+        pdf.save('struk_transaksi.pdf');
+    });
+}
+
 
     function generateStrukHTML(transaction) {
         const date = new Date(transaction.date);
