@@ -418,6 +418,19 @@
         border-color: var(--primary-color);
         box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
     }
+   .laporan-controls {
+    display: flex;
+    gap: 15px;
+    align-items: center; /* Menyelaraskan secara vertikal di tengah */
+}
+.laporan-controls .form-group {
+    flex: 1;
+}
+.laporan-controls input, 
+.laporan-controls button {
+    height: 38px; /* Atur tinggi seragam untuk input dan tombol */
+    box-sizing: border-box;
+}
     .btn {
         padding: 12px 25px;
         border-radius: 8px;
@@ -693,7 +706,7 @@
 
 <div id="struk-modal" class="modal">
     <div class="modal-content" style="max-width: 350px;">
-        <span class="modal-close" onclick="closeStrukModal()">&times;</span>
+        <span class="modal-close non-printable" onclick="closeStrukModal()">&times;</span>
         <div id="struk-content" class="struk-content">
             <div class="struk-header">
                
@@ -729,7 +742,7 @@ Jangan lupa follow dan tag kami di media sosial</p>
         </div>
         <div class="struk-buttons non-printable">
     <button class="btn btn-primary" onclick="shareStruk()">Bagikan Struk</button>
-    <button class="btn btn-warning" onclick="cetakStrukPdf()">Cetak Struk</button>
+    <button class="btn btn-warning" onclick="cetakStrukPdf()">Download Struk</button>
     <button class="btn btn-danger" onclick="closeStrukModal()">Tutup</button>
 </div>
         
@@ -864,19 +877,19 @@ Jangan lupa follow dan tag kami di media sosial</p>
                     <p>Transfer : <span id="laba-bersih-transfer">Rp 0</span></p>
                 </div>
             </div>
-            <form id="form-filter-laporan" style="margin-bottom: 25px;">
-                <div style="display: flex; gap: 15px; align-items: flex-end;">
-                    <div class="form-group" style="flex: 1;">
-                        <label for="tanggal-mulai">Tanggal Mulai</label>
-                        <input type="date" id="tanggal-mulai" class="form-control">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label for="tanggal-selesai">Tanggal Selesai</label>
-                        <input type="date" id="tanggal-selesai" class="form-control">
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="height: 48px;">Tampilkan</button>
-                </div>
-            </form>
+           <form id="form-filter-laporan" style="margin-bottom: 25px;">
+    <div style="display: flex; gap: 15px; align-items: center;">
+        <div class="form-group" style="flex: 1;">
+            <label for="tanggal-mulai">Tanggal Mulai</label>
+            <input type="date" id="tanggal-mulai" class="form-control">
+        </div>
+        <div class="form-group" style="flex: 1;">
+            <label for="tanggal-selesai">Tanggal Selesai</label>
+            <input type="date" id="tanggal-selesai" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Tampilkan</button>
+    </div>
+</form>
             <div id="printable-area" class="printable-content">
                 <div class="card" style="padding: 0;">
                         <div style="padding: 15px;">
