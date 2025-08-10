@@ -565,6 +565,10 @@
     .modal-close, .struk-buttons {
         display: none !important;
     }
+    .struk-content, .struk-content * {
+        font-weight: bold !important;
+        color: black !important;
+    }
     /* Pastikan warna teks terlihat hitam */
     h3, h4, p, table {
         color: black !important;
@@ -703,7 +707,7 @@ Jangan lupa follow dan tag kami di media sosial</p>
         </div>
         <div class="struk-buttons">
             <button class="btn btn-primary" onclick="shareStruk()">Bagikan Struk</button>
-            <button class="btn btn-warning" onclick="cetakStrukText(currentTransaction)">Cetak Struk</button>
+            <button class="btn btn-warning" onclick="cetakStruk()">Cetak Struk</button>
             <button class="btn btn-danger" onclick="closeStrukModal()">Tutup</button>
         </div>
     </div>
@@ -1824,6 +1828,9 @@ di media sosial
             document.body.removeChild(tempContainer);
         });
     }
+    function cetakStruk() {
+    window.print();
+}
     // Fungsi untuk membagikan struk dari laporan
 async function shareStrukLaporan(transactionId) {
     const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
