@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
    <style>
     /* CSS untuk Tampilan Aplikasi */
+    
     :root {
         --primary-color: #3498db;
         --primary-hover: #2980b9;
@@ -608,6 +609,7 @@
         height: auto;
         margin-bottom: 10px;
     }
+    
 </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -701,7 +703,7 @@ Jangan lupa follow dan tag kami di media sosial</p>
         </div>
         <div class="struk-buttons">
             <button class="btn btn-primary" onclick="shareStruk()">Bagikan Struk</button>
-            <button class="btn btn-warning" onclick="cetakStruk()">Cetak Struk</button>
+            <button class="btn btn-warning" onclick="cetakStrukText(currentTransaction)">Cetak Struk</button>
             <button class="btn btn-danger" onclick="closeStrukModal()">Tutup</button>
         </div>
     </div>
@@ -1383,6 +1385,7 @@ Jangan lupa follow dan tag kami di media sosial</p>
     }
 
     function showStruk(transaction) {
+        currentTransaction = transaction;
         const strukTanggal = document.getElementById('struk-tanggal');
         const strukWaktu = document.getElementById('struk-waktu');
         const strukNomorMeja = document.getElementById('struk-nomor-meja');
@@ -1391,7 +1394,7 @@ Jangan lupa follow dan tag kami di media sosial</p>
         const strukBayarTunai = document.getElementById('struk-bayar-tunai');
         const strukBayarTransfer = document.getElementById('struk-bayar-transfer');
         const strukKembalian = document.getElementById('struk-kembalian');
-
+        
         const date = new Date(transaction.date);
         strukTanggal.textContent = date.toLocaleDateString('id-ID');
         strukWaktu.textContent = date.toLocaleTimeString('id-ID');
@@ -1422,7 +1425,7 @@ Jangan lupa follow dan tag kami di media sosial</p>
     }
     
     // Fungsi Bagikan Struk dengan Fallback
-    function shareStruk() {
+     function shareStruk() {
         if (!currentTransaction) {
             alert('Tidak ada struk untuk dibagikan.');
             return;
@@ -1466,7 +1469,6 @@ di media sosial
 @y'umah kadek
 `;
 
-
         // First try Web Share API
         if (navigator.share) {
             navigator.share({
@@ -1490,21 +1492,55 @@ di media sosial
             fallbackShare(textStruk);
         }
     }
-    function cetakStruk() {
-    // Tampilkan modal struk
-    document.getElementById("struk-modal").style.display = "flex";
+   function cetakStrukText(transaction) {
+    if (!transaction) {
+        alert('Tidak ada data transaksi untuk dicetak.');
+        return;
+    }
 
-    // Tunggu sebentar agar browser siap
-    setTimeout(() => {
-        // Jalankan perintah cetak
-        window.print();
-    }, 500);
+    const date = new Date(transaction.date);
+    const strukTanggal = date.toLocaleDateString('id-ID');
+    const strukWaktu = date.toLocaleTimeString('id-ID');
+    const strukNomorMeja = transaction.nomorMeja;
+    const totalHarga = transaction.totalHarga.toLocaleString('id-ID');
+    const bayarTunai = transaction.tunai.toLocaleString('id-ID');
+    const bayarTransfer = transaction.transfer.toLocaleString('id-ID');
+    const kembalian = transaction.kembalian.toLocaleString('id-ID');
 
-    // Tutup modal setelah cetak selesai
-    window.onafterprint = function() {
-        closeStrukModal();
-        window.onafterprint = null;
-    };
+    let textStruk = `
+Y'UMAH KADEK
+Pandawa Beach Kutuh, Kuta Selatan, Badung-Bali
+Tanggal: ${strukTanggal}
+Waktu: ${strukWaktu}
+No. Meja: ${strukNomorMeja}
+------------------------------
+`;
+    transaction.items.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        textStruk += `${item.name} x${item.quantity} = Rp ${(itemTotal).toLocaleString('id-ID')}\n`;
+    });
+
+    textStruk += `
+------------------------------
+Total: Rp ${totalHarga}
+Tunai: Rp ${bayarTunai}
+Transfer: Rp ${bayarTransfer}
+Kembalian: Rp ${kembalian}
+------------------------------
+Liburan Happy, Laper No Worry!
+Thank you for your order!
+We hope you like it.
+Jangan lupa follow dan tag kami 
+di media sosial
+@y'umah kadek
+`;
+    
+    const newWindow = window.open('', '', 'width=300,height=400');
+    newWindow.document.open();
+    newWindow.document.write('<pre>' + textStruk + '</pre>');
+    newWindow.document.close();
+    newWindow.print();
+    newWindow.close();
 }
 
     function fallbackShare(text) {
