@@ -539,39 +539,61 @@
         width: 100%;
         padding: 10px;
     }
-    /* print-specific styles */
-   @media print {
-    /* Sembunyikan semua elemen kecuali modal */
+   /* print-specific styles */
+@media print {
+    /* Atur ukuran kertas cetak agar sesuai dengan printer thermal (80mm) */
+    @page {
+        size: 80mm auto;
+        margin: 0;
+    }
+
+    /* Sembunyikan semua elemen di luar struk */
     body > *:not(#struk-modal) {
         display: none !important;
     }
-    /* Tampilkan modal struk secara penuh untuk dicetak */
+    
+    /* Atur tampilan struk agar memenuhi kertas cetak */
     #struk-modal {
         display: block !important;
-        position: static; /* Ganti fixed menjadi static untuk cetak */
-        width: 100%;
+        position: static;
+        width: 80mm; /* Atur lebar secara eksplisit */
         height: auto;
         background-color: white;
         padding: 0;
         margin: 0;
+        box-sizing: border-box; /* Pastikan padding dan border tidak melebihi lebar */
     }
+
+    /* Atur konten struk di dalamnya */
     .modal-content {
         box-shadow: none;
-        padding: 0;
-        width: auto;
+        padding: 5mm; /* Beri sedikit padding untuk estetika */
+        width: 100%;
         max-width: none;
     }
-    /* Sembunyikan elemen yang tidak perlu dicetak di dalam modal */
+    
+    /* Sembunyikan tombol dan elemen yang tidak perlu dicetak */
     .modal-close, .struk-buttons {
         display: none !important;
     }
+
+    /* Atur ukuran font agar lebih jelas */
     .struk-content, .struk-content * {
+        font-family: 'Courier New', Courier, monospace !important; /* Font monospace lebih cocok untuk struk */
+        font-size: 10pt !important; /* Sesuaikan ukuran font, 10pt biasanya ideal */
         font-weight: bold !important;
         color: black !important;
+        line-height: 1.2 !important; /* Atur spasi baris agar tidak terlalu rapat */
     }
-    /* Pastikan warna teks terlihat hitam */
-    h3, h4, p, table {
-        color: black !important;
+
+    .struk-total p {
+        font-size: 11pt !important;
+    }
+
+    /* Atur gambar logo */
+    .struk-logo {
+        max-width: 50mm; /* Batasi lebar logo agar tidak terlalu besar */
+        height: auto;
     }
 }
     /* New styles for payment method modal */
